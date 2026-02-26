@@ -1,0 +1,277 @@
+<div id="bf_validator_settings">
+    <div class="inline-drawer">
+        <div class="inline-drawer-toggle inline-drawer-header">
+            <b>BF's Agentic Response Validator</b>
+            <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
+        </div>
+        <div class="inline-drawer-content">
+            <!-- Status Bar -->
+            <div class="bf-validator-status">
+                <div id="bf_validator_status_dot" class="bf-validator-status-dot"></div>
+                <span id="bf_validator_status_text" class="bf-validator-status-text">Disabled</span>
+            </div>
+
+            <!-- Main Toggle -->
+            <div class="bf-validator-row">
+                <label class="checkbox_label">
+                    <input type="checkbox" id="bf_validator_enabled" />
+                    <span>Enable Response Validation</span>
+                </label>
+            </div>
+
+            <div id="bf_validator_settings_content" style="display: none;">
+
+                <!-- ====== Quick Setup: Presets & Behavior ====== -->
+                <div class="bf-validator-section">
+                    <div class="bf-validator-section-header">
+                        <h4>Quick Setup</h4>
+                    </div>
+
+                    <div class="bf-validator-row">
+                        <label>Preset:</label>
+                        <select id="bf_validator_preset_select" class="text_pole" style="flex: 1;">
+                            <option value="Default">Default</option>
+                        </select>
+                        <button id="bf_validator_preset_save" class="menu_button" title="Save preset">
+                            <i class="fa-solid fa-save"></i>
+                        </button>
+                        <button id="bf_validator_preset_new" class="menu_button" title="New preset">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                        <button id="bf_validator_preset_delete" class="menu_button" title="Delete preset">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+
+                    <div class="bf-validator-row">
+                        <label>Max retries:</label>
+                        <input type="number" id="bf_validator_max_retries" class="text_pole" min="1" max="5" value="3" style="max-width: 80px;" />
+                        <label class="checkbox_label" style="min-width: auto;">
+                            <input type="checkbox" id="bf_validator_show_toast" />
+                            <span>Toast notifications</span>
+                        </label>
+                    </div>
+                    <div class="bf-validator-info">How often to retry on validation fail. Toast shows pass/fail pop-ups.</div>
+                </div>
+
+                <!-- ====== Stage 0: Local Quick-Check ====== -->
+                <div class="bf-validator-section">
+                    <div class="bf-validator-section-header">
+                        <h4><span class="bf-validator-stage-badge stage-0">S0</span> Local Quick-Check</h4>
+                    </div>
+                    <div class="bf-validator-info" style="margin-top: 0; margin-bottom: 8px;">
+                        Free instant checks (no API call). On fail, injects issue-specific feedback and retries.
+                    </div>
+
+                    <div class="bf-validator-row">
+                        <label class="checkbox_label">
+                            <input type="checkbox" id="bf_validator_local_enabled" />
+                            <span>Enable local checks</span>
+                        </label>
+                    </div>
+
+                    <div class="bf-validator-row">
+                        <label>Min words:</label>
+                        <input type="number" id="bf_validator_min_words" class="text_pole" min="0" max="9999" value="0" style="max-width: 80px;" />
+                        <label style="min-width: auto;">Max words:</label>
+                        <input type="number" id="bf_validator_max_words" class="text_pole" min="0" max="9999" value="0" style="max-width: 80px;" />
+                    </div>
+                    <div class="bf-validator-info">Set to 0 to disable. Min/max word count for the AI response.</div>
+
+                    <div class="bf-validator-row" style="align-items: center;">
+                        <label class="checkbox_label" style="flex: 0 0 auto;">
+                            <input type="checkbox" id="bf_validator_cliche_enabled" />
+                            <span>Check cliche patterns</span>
+                        </label>
+                        <span id="bf_validator_cliche_count" style="color: #888; font-size: 0.85em;">(0 patterns)</span>
+                        <button id="bf_validator_manage_cliches" class="menu_button" title="Manage cliche patterns" style="font-size: 0.85em; padding: 2px 8px;">
+                            <i class="fa-solid fa-list-check"></i> Manage
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ====== Stage 1: Quality Check (LLM) ====== -->
+                <div class="bf-validator-section">
+                    <div class="bf-validator-section-header">
+                        <h4><span class="bf-validator-stage-badge stage-1">S1</span> Quality Check (LLM)</h4>
+                    </div>
+                    <div class="bf-validator-info" style="margin-top: 0; margin-bottom: 8px;">
+                        LLM checks each rule individually. Only failed rules inject OOC feedback.
+                    </div>
+
+                    <div class="bf-validator-row">
+                        <label class="checkbox_label">
+                            <input type="checkbox" id="bf_validator_quality_enabled" />
+                            <span>Enable quality check</span>
+                        </label>
+                    </div>
+
+                    <!-- Full Presets: save/load entire rulesets -->
+                    <div class="bf-validator-row" style="margin-top: 8px;">
+                        <label>Rules Preset:</label>
+                        <select id="bf_validator_full_preset_select" class="text_pole" style="flex: 1;">
+                            <option value="">-- No Preset --</option>
+                        </select>
+                        <button id="bf_validator_full_preset_save" class="menu_button" title="Save current rules to selected preset">
+                            <i class="fa-solid fa-save"></i>
+                        </button>
+                        <button id="bf_validator_full_preset_new" class="menu_button" title="Save as new preset">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                        <button id="bf_validator_full_preset_delete" class="menu_button" title="Delete selected preset">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+
+                    <!-- Rule Presets: click to add individual rules -->
+                    <div style="margin-top: 10px;">
+                        <label style="color: #aaa; font-size: 0.9em;">Add Rule:</label>
+                        <div id="bf_validator_rule_presets" class="bf-validator-presets"></div>
+                    </div>
+
+                    <!-- Rules list: collapsible cards -->
+                    <div id="bf_validator_rules_container" style="margin-top: 10px;"></div>
+                    <button id="bf_validator_add_custom_rule" class="menu_button" style="margin-top: 6px; font-size: 0.85em;">
+                        <i class="fa-solid fa-plus"></i> Custom Rule
+                    </button>
+
+                    <div class="bf-validator-slider-row" style="margin-top: 10px;">
+                        <label>Context messages:</label>
+                        <input type="range" id="bf_validator_quality_context" min="1" max="20" step="1" />
+                        <span id="bf_validator_quality_context_val" class="bf-validator-slider-val">5</span>
+                    </div>
+                    <div class="bf-validator-info">Number of recent messages (user + AI) for context. More = deeper analysis, more tokens.</div>
+
+                    <!-- Quality Check Prompt -->
+                    <div style="margin-top: 10px;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                            <label style="color: #aaa; font-size: 0.9em;">Quality Check Prompt:</label>
+                            <button id="bf_validator_reset_quality_prompt" class="menu_button" title="Reset to default" style="font-size: 0.8em; padding: 2px 6px;">
+                                <i class="fa-solid fa-undo"></i>
+                            </button>
+                        </div>
+                        <textarea id="bf_validator_quality_prompt" class="bf-validator-textarea" style="min-height: 80px;"></textarea>
+                        <div class="bf-validator-info">Variables: {rules}, {recentMessages}, {response}. LLM replies with broken rule numbers only.</div>
+                    </div>
+                </div>
+
+                <!-- ====== Feedback Templates ====== -->
+                <div class="bf-validator-section">
+                    <div class="bf-validator-section-header">
+                        <h4>Feedback Templates</h4>
+                    </div>
+                    <div class="bf-validator-info" style="margin-top: 0; margin-bottom: 8px;">
+                        OOC correction injected on fail. Each issue type uses its own template.
+                    </div>
+
+                    <div style="margin-top: 4px;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                            <label style="color: #aaa; font-size: 0.9em;">Cliche detected:</label>
+                            <button id="bf_validator_reset_cliche_feedback" class="menu_button" title="Reset to default" style="font-size: 0.8em; padding: 2px 6px;">
+                                <i class="fa-solid fa-undo"></i>
+                            </button>
+                        </div>
+                        <textarea id="bf_validator_cliche_feedback" class="bf-validator-textarea" style="min-height: 50px;"></textarea>
+                    </div>
+
+                    <div style="margin-top: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                            <label style="color: #aaa; font-size: 0.9em;">Too many words:</label>
+                            <button id="bf_validator_reset_wordcount_max_feedback" class="menu_button" title="Reset to default" style="font-size: 0.8em; padding: 2px 6px;">
+                                <i class="fa-solid fa-undo"></i>
+                            </button>
+                        </div>
+                        <textarea id="bf_validator_wordcount_max_feedback" class="bf-validator-textarea" style="min-height: 50px;"></textarea>
+                    </div>
+
+                    <div style="margin-top: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                            <label style="color: #aaa; font-size: 0.9em;">Too few words:</label>
+                            <button id="bf_validator_reset_wordcount_min_feedback" class="menu_button" title="Reset to default" style="font-size: 0.8em; padding: 2px 6px;">
+                                <i class="fa-solid fa-undo"></i>
+                            </button>
+                        </div>
+                        <textarea id="bf_validator_wordcount_min_feedback" class="bf-validator-textarea" style="min-height: 50px;"></textarea>
+                    </div>
+
+                    <div style="margin-top: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                            <label style="color: #aaa; font-size: 0.9em;">Quality check failed:</label>
+                            <button id="bf_validator_reset_quality_feedback" class="menu_button" title="Reset to default" style="font-size: 0.8em; padding: 2px 6px;">
+                                <i class="fa-solid fa-undo"></i>
+                            </button>
+                        </div>
+                        <textarea id="bf_validator_quality_feedback" class="bf-validator-textarea" style="min-height: 50px;"></textarea>
+                    </div>
+
+                    <div class="bf-validator-info">Variables: {reason}, {attempt}, {max_attempts}, {min}, {max}</div>
+                </div>
+
+                <!-- ====== Advanced ====== -->
+                <div class="bf-validator-section">
+                    <div class="bf-validator-section-header">
+                        <h4>Advanced</h4>
+                    </div>
+
+                    <!-- Validator Profile -->
+                    <div class="bf-validator-row">
+                        <label class="checkbox_label">
+                            <input type="checkbox" id="bf_validator_use_profile" />
+                            <span>Use separate validator profile</span>
+                        </label>
+                    </div>
+
+                    <div id="bf_validator_profile_section" style="display: none;">
+                        <div class="bf-validator-row">
+                            <label>Validator Profile:</label>
+                            <select id="bf_validator_profile" class="text_pole">
+                                <option value="">-- Select Validator Profile --</option>
+                            </select>
+                            <button id="bf_validator_refresh_profiles" class="menu_button" title="Refresh profiles">
+                                <i class="fa-solid fa-refresh"></i>
+                            </button>
+                        </div>
+                        <div class="bf-validator-info">Use a separate (e.g. cheaper) model for the S1 quality check.</div>
+                    </div>
+
+                    <!-- Reset All -->
+                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <button id="bf_validator_reset_all" class="menu_button" style="font-size: 0.85em; color: #f88;">
+                            <i class="fa-solid fa-undo"></i> Reset All Settings to Defaults
+                        </button>
+                        <div class="bf-validator-info">Clears ALL saved settings, presets, templates, and profiles back to factory defaults.</div>
+                    </div>
+                </div>
+
+                <!-- ====== Debug Panel ====== -->
+                <div class="bf-validator-section">
+                    <div class="bf-validator-section-header">
+                        <h4>Debug</h4>
+                        <label class="checkbox_label" style="min-width: auto; flex: 0 0 auto;">
+                            <input type="checkbox" id="bf_validator_debug" />
+                            <span>Show log</span>
+                        </label>
+                    </div>
+
+                    <div id="bf_validator_debug_panel" style="display: none;">
+                        <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                            <button id="bf_validator_test" class="menu_button" title="Test validation">
+                                <i class="fa-solid fa-flask"></i> Test
+                            </button>
+                            <button id="bf_validator_copy_debug" class="menu_button" title="Copy logs to clipboard">
+                                <i class="fa-solid fa-copy"></i> Copy Logs
+                            </button>
+                            <button id="bf_validator_clear_debug" class="menu_button" title="Clear log">
+                                <i class="fa-solid fa-trash"></i> Clear
+                            </button>
+                        </div>
+                        <div id="bf_validator_debug_log" class="bf-validator-debug">
+                            <div class="bf-validator-debug-entry info">Waiting for activity...</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

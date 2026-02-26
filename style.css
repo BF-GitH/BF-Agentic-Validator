@@ -1,0 +1,481 @@
+/* BF's Agentic Response Validator - Styles */
+
+/* ===== Settings Panel ===== */
+
+#bf_validator_settings {
+    margin-bottom: 10px;
+}
+
+#bf_validator_settings .inline-drawer-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#bf_validator_settings .inline-drawer-header b {
+    flex: 1;
+}
+
+#bf_validator_settings_content {
+    padding: 10px 0;
+}
+
+.bf-validator-section {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bf-validator-section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bf-validator-section-header h4 {
+    margin: 0;
+    flex: 1;
+    font-size: 0.95em;
+    color: #ccc;
+}
+
+.bf-validator-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.bf-validator-row label {
+    min-width: 140px;
+    color: #aaa;
+    font-size: 0.9em;
+}
+
+.bf-validator-row select,
+.bf-validator-row input[type="number"] {
+    flex: 1;
+    max-width: 200px;
+}
+
+.bf-validator-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 8px;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 0.9em;
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    color: inherit;
+}
+
+.bf-validator-textarea:focus {
+    outline: none;
+    border-color: rgba(100, 150, 255, 0.5);
+}
+
+.bf-validator-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+}
+
+.bf-validator-preset-btn {
+    padding: 4px 8px;
+    font-size: 0.8em;
+    background: rgba(100, 150, 255, 0.2);
+    border: 1px solid rgba(100, 150, 255, 0.3);
+    border-radius: 3px;
+    color: #8af;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.bf-validator-preset-btn:hover {
+    background: rgba(100, 150, 255, 0.3);
+    border-color: rgba(100, 150, 255, 0.5);
+}
+
+.bf-validator-info {
+    color: #888;
+    font-size: 0.85em;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+/* ===== Status Indicator ===== */
+
+.bf-validator-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.bf-validator-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #666;
+}
+
+.bf-validator-status-dot.active {
+    background: #4a4;
+    box-shadow: 0 0 5px #4a4;
+}
+
+.bf-validator-status-dot.validating {
+    background: #fa0;
+    box-shadow: 0 0 5px #fa0;
+    animation: bf-pulse 1s ease-in-out infinite;
+}
+
+.bf-validator-status-dot.error {
+    background: #f44;
+    box-shadow: 0 0 5px #f44;
+}
+
+@keyframes bf-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.bf-validator-status-text {
+    flex: 1;
+    font-size: 0.9em;
+    color: #aaa;
+}
+
+/* ===== Message Hiding (display:none - 100% reliable, mobile-compatible) ===== */
+
+.mes[data-bf-validating="true"] {
+    display: none !important;
+}
+
+/* Messages marked as validated should always be visible */
+.mes[data-bf-validated="true"] {
+    display: flex !important;
+}
+
+/* ===== Checking Indicator Banner ===== */
+
+#bf_validator_checking_indicator {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #2a2a3a 0%, #1a1a2a 100%);
+    border: 1px solid rgba(255, 165, 0, 0.3);
+    border-radius: 6px;
+    color: #fa0;
+    font-size: 0.9em;
+    font-style: italic;
+    margin: 8px 0;
+    animation: bf-pulse 1.5s ease-in-out infinite;
+}
+
+#bf_validator_checking_indicator i {
+    font-size: 1.1em;
+}
+
+/* ===== Floating Selection Button ===== */
+
+#bf_validator_selection_btn {
+    position: absolute;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85em;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    white-space: nowrap;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: transform 0.1s, box-shadow 0.1s;
+    /* Touch-friendly minimum size */
+    min-height: 36px;
+    min-width: 44px;
+}
+
+#bf_validator_selection_btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+#bf_validator_selection_btn.bf-selection-add {
+    background: rgba(40, 120, 40, 0.95);
+    border: 1px solid rgba(80, 200, 80, 0.5);
+    color: #8f8;
+}
+
+#bf_validator_selection_btn.bf-selection-remove {
+    background: rgba(120, 40, 40, 0.95);
+    border: 1px solid rgba(200, 80, 80, 0.5);
+    color: #f88;
+}
+
+/* ===== Pattern Manager Popup ===== */
+
+.bf-validator-pattern-manager {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.bf-validator-pattern-list {
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.bf-validator-pm-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.bf-validator-pm-input {
+    flex: 1;
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+.bf-validator-pm-delete {
+    flex: 0 0 auto;
+    padding: 2px 8px !important;
+    font-size: 0.85em !important;
+    min-width: auto !important;
+    opacity: 0.7;
+}
+
+.bf-validator-pm-delete:hover {
+    opacity: 1;
+    color: #f88;
+}
+
+.bf-validator-pm-add-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ===== Range Slider Value Display ===== */
+
+.bf-validator-slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.bf-validator-slider-row label {
+    min-width: 140px;
+    color: #aaa;
+    font-size: 0.9em;
+}
+
+.bf-validator-slider-row input[type="range"] {
+    flex: 1;
+}
+
+.bf-validator-slider-val {
+    min-width: 35px;
+    text-align: center;
+    font-size: 0.9em;
+    color: #ccc;
+    font-weight: bold;
+}
+
+/* ===== Debug Panel ===== */
+
+.bf-validator-debug {
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.8em;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.bf-validator-debug-entry {
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.bf-validator-debug-entry.pass {
+    color: #8f8;
+}
+
+.bf-validator-debug-entry.fail {
+    color: #f88;
+}
+
+.bf-validator-debug-entry.info {
+    color: #88f;
+}
+
+/* ===== Rule Cards ===== */
+
+.bf-validator-rule-card {
+    margin-bottom: 6px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.bf-validator-rule-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    cursor: default;
+}
+
+.bf-validator-rule-toggle {
+    flex: 0 0 auto;
+    min-width: auto !important;
+}
+
+.bf-validator-rule-name {
+    flex: 1;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    color: #ccc;
+    font-size: 0.9em;
+    font-weight: 600;
+    padding: 2px 6px;
+}
+
+.bf-validator-rule-name:hover,
+.bf-validator-rule-name:focus {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.15);
+    outline: none;
+}
+
+.bf-validator-rule-chevron,
+.bf-validator-rule-delete {
+    flex: 0 0 auto;
+    background: transparent;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 4px 6px;
+    font-size: 0.85em;
+    border-radius: 3px;
+    transition: color 0.15s, background 0.15s;
+}
+
+.bf-validator-rule-chevron:hover {
+    color: #ccc;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.bf-validator-rule-delete:hover {
+    color: #f88;
+    background: rgba(255, 80, 80, 0.1);
+}
+
+.bf-validator-rule-chevron i {
+    transition: transform 0.2s;
+}
+
+.bf-validator-rule-card:not(.collapsed) .bf-validator-rule-chevron i {
+    transform: rotate(180deg);
+}
+
+.bf-validator-rule-body {
+    padding: 0 8px 8px;
+}
+
+.bf-validator-rule-card.collapsed .bf-validator-rule-body {
+    display: none;
+}
+
+/* Disabled rule visual cue */
+.bf-validator-rule-card:has(.bf-validator-rule-enabled:not(:checked)) .bf-validator-rule-name {
+    opacity: 0.5;
+    text-decoration: line-through;
+}
+
+/* Full preset buttons */
+.bf-validator-full-preset-btn {
+    padding: 4px 8px;
+    font-size: 0.8em;
+    background: rgba(200, 150, 50, 0.2);
+    border: 1px solid rgba(200, 150, 50, 0.3);
+    border-radius: 3px;
+    color: #da6;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.bf-validator-full-preset-btn:hover {
+    background: rgba(200, 150, 50, 0.35);
+    border-color: rgba(200, 150, 50, 0.5);
+}
+
+.bf-validator-full-preset-btn.bf-validator-full-preset-user {
+    background: rgba(150, 100, 200, 0.2);
+    border-color: rgba(150, 100, 200, 0.3);
+    color: #b8a;
+}
+
+.bf-validator-full-preset-btn.bf-validator-full-preset-user:hover {
+    background: rgba(150, 100, 200, 0.35);
+    border-color: rgba(150, 100, 200, 0.5);
+}
+
+/* ===== Stage Header Badges ===== */
+
+.bf-validator-stage-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-weight: bold;
+    margin-right: 6px;
+}
+
+.bf-validator-stage-badge.stage-0 {
+    background: rgba(100, 200, 100, 0.2);
+    color: #8f8;
+    border: 1px solid rgba(100, 200, 100, 0.3);
+}
+
+.bf-validator-stage-badge.stage-1 {
+    background: rgba(100, 150, 255, 0.2);
+    color: #8af;
+    border: 1px solid rgba(100, 150, 255, 0.3);
+}
+
+.bf-validator-stage-badge.stage-2 {
+    background: rgba(200, 100, 255, 0.2);
+    color: #c8f;
+    border: 1px solid rgba(200, 100, 255, 0.3);
+}
