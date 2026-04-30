@@ -4,7 +4,24 @@
 import { getConnectionProfiles, getCurrentProfileId } from './profiler.js';
 import { getDefaultQualityFeedbackTemplate, getDefaultClicheFeedbackTemplate, getDefaultWordCountMaxFeedbackTemplate, getDefaultWordCountMinFeedbackTemplate } from './injector.js';
 import { getDefaultClichePatterns } from './local-checker.js';
-import { Popup, POPUP_TYPE } from '../../../../popup.js';
+// Dynamic import to avoid crashing the module if the path differs across ST installs
+let Popup, POPUP_TYPE;
+async function ensurePopup() {
+    if (Popup) return true;
+    const paths = ['../../../../popup.js', '../../../../../popup.js', '../../../../scripts/popup.js'];
+    for (const p of paths) {
+        try {
+            const mod = await import(p);
+            Popup = mod.Popup;
+            POPUP_TYPE = mod.POPUP_TYPE;
+            return true;
+        } catch (e) {
+            // Try next path
+        }
+    }
+    console.error('[BFValidator] Could not load Popup module from any path');
+    return false;
+}
 
 const EXTENSION_NAME = 'bf-agentic-validator';
 
@@ -32,6 +49,7 @@ Example: 1, 3`;
 
 const DEFAULT_SETTINGS = {
     enabled: false,
+    agenticMode: true,
     maxRetries: 3,
     showToast: true,
     debugMode: false,
@@ -188,10 +206,12 @@ export function updateStatus(status, message = '') {
     } else if (statusText) {
         if (!extensionSettings?.enabled) {
             statusText.textContent = 'Disabled';
-        } else if (extensionSettings.useValidatorProfile && extensionSettings.validatorProfile) {
-            statusText.textContent = 'Active - Using separate validator profile!';
         } else {
-            statusText.textContent = 'Active - Using main model';
+            const mode = extensionSettings.agenticMode ? 'Agentic' : 'Monitor only';
+            const model = extensionSettings.useValidatorProfile && extensionSettings.validatorProfile
+                ? ' (separate profile)'
+                : '';
+            statusText.textContent = `Active - ${mode}${model}`;
         }
     }
 }
@@ -331,6 +351,7 @@ function savePreset(name) {
     extensionSettings.presets[name] = {
         localCheck: JSON.parse(JSON.stringify(extensionSettings.localCheck)),
         qualityCheck: JSON.parse(JSON.stringify(extensionSettings.qualityCheck)),
+        agenticMode: extensionSettings.agenticMode,
         maxRetries: extensionSettings.maxRetries,
         useValidatorProfile: extensionSettings.useValidatorProfile,
         validatorProfile: extensionSettings.validatorProfile,
@@ -350,6 +371,7 @@ function loadPreset(name) {
         extensionSettings.localCheck = JSON.parse(JSON.stringify(DEFAULT_SETTINGS.localCheck));
         extensionSettings.localCheck.clichePatterns = getDefaultClichePatterns();
         extensionSettings.qualityCheck = JSON.parse(JSON.stringify(DEFAULT_SETTINGS.qualityCheck));
+        extensionSettings.agenticMode = true;
         extensionSettings.maxRetries = 3;
         extensionSettings.useValidatorProfile = false;
         extensionSettings.validatorProfile = null;
@@ -357,6 +379,7 @@ function loadPreset(name) {
         const preset = extensionSettings.presets[name];
         if (preset.localCheck) extensionSettings.localCheck = JSON.parse(JSON.stringify(preset.localCheck));
         if (preset.qualityCheck) extensionSettings.qualityCheck = JSON.parse(JSON.stringify(preset.qualityCheck));
+        extensionSettings.agenticMode = preset.agenticMode !== undefined ? preset.agenticMode : true;
         extensionSettings.maxRetries = preset.maxRetries || 3;
         extensionSettings.useValidatorProfile = preset.useValidatorProfile || false;
         extensionSettings.validatorProfile = preset.validatorProfile || null;
@@ -547,6 +570,12 @@ async function openClichePatternManager() {
 
     renderList();
 
+    if (!await ensurePopup()) {
+        // Fallback: use a simple alert-style display
+        toastr.error('Popup module unavailable. Patterns saved automatically.', 'BF Validator');
+        return;
+    }
+
     const popup = new Popup(container, POPUP_TYPE.TEXT, '', {
         okButton: 'Done',
         cancelButton: false,
@@ -608,6 +637,9 @@ function refreshUI() {
     // Main toggle
     $('#bf_validator_enabled').prop('checked', extensionSettings.enabled);
     $('#bf_validator_settings_content').toggle(extensionSettings.enabled);
+
+    // Agentic mode
+    $('#bf_validator_agentic_mode').prop('checked', extensionSettings.agenticMode);
 
     // Profile
     $('#bf_validator_use_profile').prop('checked', extensionSettings.useValidatorProfile);
@@ -877,6 +909,64 @@ function updateFullPresetDropdown() {
 }
 
 /**
+ * Setup ARIA-compliant tab navigation with keyboard support.
+ */
+function setupTabs() {
+    const tablist = document.querySelector('.bf-validator-tabs[role="tablist"]');
+    if (!tablist) return;
+
+    const tabs = Array.from(tablist.querySelectorAll('[role="tab"]'));
+    if (!tabs.length) return;
+
+    function activateTab(tab) {
+        tabs.forEach(t => {
+            t.setAttribute('aria-selected', 'false');
+            t.setAttribute('tabindex', '-1');
+            t.classList.remove('active');
+            const panel = document.getElementById(t.getAttribute('aria-controls'));
+            if (panel) {
+                panel.style.display = 'none';
+                panel.setAttribute('aria-hidden', 'true');
+            }
+        });
+
+        tab.setAttribute('aria-selected', 'true');
+        tab.setAttribute('tabindex', '0');
+        tab.classList.add('active');
+        tab.focus();
+
+        const panel = document.getElementById(tab.getAttribute('aria-controls'));
+        if (panel) {
+            panel.style.display = '';
+            panel.setAttribute('aria-hidden', 'false');
+        }
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => activateTab(tab));
+        tab.addEventListener('keydown', (e) => {
+            const idx = tabs.indexOf(tab);
+            let target = null;
+
+            if (e.key === 'ArrowRight') {
+                target = tabs[(idx + 1) % tabs.length];
+            } else if (e.key === 'ArrowLeft') {
+                target = tabs[(idx - 1 + tabs.length) % tabs.length];
+            } else if (e.key === 'Home') {
+                target = tabs[0];
+            } else if (e.key === 'End') {
+                target = tabs[tabs.length - 1];
+            }
+
+            if (target) {
+                e.preventDefault();
+                activateTab(target);
+            }
+        });
+    });
+}
+
+/**
  * Load the UI template and attach handlers
  */
 async function loadUI() {
@@ -914,6 +1004,13 @@ async function loadUI() {
             const indicator = document.getElementById('bf_validator_checking_indicator');
             if (indicator) indicator.style.display = 'none';
         }
+    });
+
+    // === Agentic Mode Toggle ===
+    $('#bf_validator_agentic_mode').prop('checked', extensionSettings.agenticMode).on('change', function () {
+        extensionSettings.agenticMode = $(this).prop('checked');
+        updateStatus('idle');
+        saveSettings();
     });
 
     // === Profile Section ===
@@ -1195,6 +1292,13 @@ async function loadUI() {
     $('#bf_validator_profile_section').toggle(extensionSettings.useValidatorProfile);
     $('#bf_validator_debug_panel').toggle(extensionSettings.debugMode);
     updateStatus('idle');
+
+    // Setup tab navigation
+    try {
+        setupTabs();
+    } catch (e) {
+        console.error('[BFValidator] Tab setup error:', e);
+    }
 
     console.log('[BFValidator] UI loaded');
 }

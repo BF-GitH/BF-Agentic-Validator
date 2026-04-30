@@ -486,9 +486,20 @@ async function validateResponse(response, messageIndex) {
             const localResult = runLocalChecks(response, settings.localCheck);
 
             if (!localResult.pass) {
-                // Build dynamic feedback - one OOC per issue type using its own template
-                const firstIssue = localResult.issues[0];
                 addDebugLog('fail', `Stage 0 FAIL: ${localResult.issues.map(i => i.message).join('; ')}`);
+
+                if (settings.showToast) {
+                    const allMessages = localResult.issues.map(i => i.message).join('; ');
+                    toastr.warning(`Local check failed: ${allMessages}`, 'BF Validator');
+                }
+
+                // If agentic mode is off, report only — no retry
+                if (!settings.agenticMode) {
+                    addDebugLog('info', 'Agentic mode disabled — skipping retry');
+                    showMessage(messageIndex);
+                    finishValidation(false);
+                    return;
+                }
 
                 if (currentAttempt >= settings.maxRetries) {
                     addDebugLog('fail', `Max retries (${settings.maxRetries}) reached at Stage 0`);
@@ -497,21 +508,21 @@ async function validateResponse(response, messageIndex) {
                     return;
                 }
 
-                // Use the template matching the first issue type
-                const ooc = buildFeedbackOOC(firstIssue.type, {
-                    reason: firstIssue.message,
-                    attempt: currentAttempt + 1,
-                    maxAttempts: settings.maxRetries,
-                    max: settings.localCheck.maxWords || 0,
-                    min: settings.localCheck.minWords || 0,
-                    template: settings.localCheck.feedbackTemplates?.[firstIssue.type] || null,
+                // Build combined OOC from ALL failed issues
+                const oocParts = localResult.issues.map(issue => {
+                    return buildFeedbackOOC(issue.type, {
+                        reason: issue.message,
+                        attempt: currentAttempt + 1,
+                        maxAttempts: settings.maxRetries,
+                        max: settings.localCheck.maxWords || 0,
+                        min: settings.localCheck.minWords || 0,
+                        template: settings.localCheck.feedbackTemplates?.[issue.type] || null,
+                    });
                 });
+                const ooc = oocParts.join('\n');
 
-                addDebugLog('info', `OOC injected: ${ooc.substring(0, 500)}`);
+                addDebugLog('info', `OOC injected (${localResult.issues.length} issues): ${ooc.substring(0, 500)}`);
                 updateStatus('validating', `Stage 0 fail - retrying (${currentAttempt + 1}/${settings.maxRetries})`);
-                if (settings.showToast) {
-                    toastr.warning(`Local check failed: ${firstIssue.message}`, 'BF Validator');
-                }
 
                 await retryWithFeedback(ooc);
                 return;
@@ -543,6 +554,23 @@ async function validateResponse(response, messageIndex) {
 
         // Profile is now restored - handle LLM result
         if (llmResult && !llmResult.pass) {
+            // If agentic mode is off, report only — no retry
+            if (!settings.agenticMode) {
+                addDebugLog('info', 'Agentic mode disabled — skipping retry');
+                if (settings.showToast) {
+                    const enabledRules = llmResult.enabledRules || [];
+                    const failedIndices = llmResult.failed || [];
+                    const failedNames = failedIndices
+                        .map(num => enabledRules.find(r => r.index === num)?.rule?.name)
+                        .filter(Boolean);
+                    const failMsg = failedNames.length > 0 ? `Failed: ${failedNames.join(', ')}` : llmResult.reason;
+                    toastr.warning(failMsg, 'BF Validator');
+                }
+                showMessage(messageIndex);
+                finishValidation(false);
+                return;
+            }
+
             if (currentAttempt >= settings.maxRetries) {
                 addDebugLog('fail', `Max retries (${settings.maxRetries}) reached at Stage 1`);
                 showMessage(messageIndex);

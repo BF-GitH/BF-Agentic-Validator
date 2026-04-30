@@ -106,7 +106,17 @@ export function runLocalChecks(response, localSettings) {
 
     const issues = [];
 
-    // Cliche pattern check
+    // Word count check (first)
+    const wordResult = checkWordCount(response, localSettings.minWords || 0, localSettings.maxWords || 0);
+    if (!wordResult.pass) {
+        const isMin = wordResult.issue.startsWith('Too short');
+        issues.push({
+            type: isMin ? 'wordcount_min' : 'wordcount_max',
+            message: wordResult.issue,
+        });
+    }
+
+    // Cliche pattern check (second)
     if (localSettings.clichePatternsEnabled) {
         const clicheResult = checkClichePatterns(response, localSettings.clichePatterns || []);
         if (clicheResult.found) {
@@ -115,16 +125,6 @@ export function runLocalChecks(response, localSettings) {
                 message: `"${clicheResult.matches.join('", "')}"`,
             });
         }
-    }
-
-    // Word count check
-    const wordResult = checkWordCount(response, localSettings.minWords || 0, localSettings.maxWords || 0);
-    if (!wordResult.pass) {
-        const isMin = wordResult.issue.startsWith('Too short');
-        issues.push({
-            type: isMin ? 'wordcount_min' : 'wordcount_max',
-            message: wordResult.issue,
-        });
     }
 
     return { pass: issues.length === 0, issues };

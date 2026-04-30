@@ -1,115 +1,178 @@
 /* BF's Agentic Response Validator - Styles */
+/* OOC-inspired tab layout with CSS custom properties */
 
-/* ===== Settings Panel ===== */
+/* ===== CSS Custom Properties ===== */
 
-#bf_validator_settings {
-    margin-bottom: 10px;
+.bf-validator-extension-block {
+    --bfv-bg: var(--SmartThemeBlurTintColor, rgba(0, 0, 0, 0.1));
+    --bfv-border: var(--SmartThemeBorderColor, rgba(128, 128, 128, 0.3));
+    --bfv-text: var(--SmartThemeBodyColor, inherit);
+    --bfv-text-muted: var(--SmartThemeQuoteColor, #aaa);
+    --bfv-text-danger: #ff4444;
+    --bfv-accent: var(--SmartThemeQuoteColor, #888);
+    --bfv-tab-bg: transparent;
+    --bfv-tab-active-bg: var(--SmartThemeBlurTintColor, rgba(255, 255, 255, 0.08));
+    --bfv-tab-active-border: var(--SmartThemeQuoteColor, #888);
+    --bfv-spacing-xs: 4px;
+    --bfv-spacing-sm: 8px;
+    --bfv-spacing-md: 12px;
+    --bfv-spacing-lg: 16px;
+    --bfv-spacing-xl: 24px;
+    --bfv-radius: 5px;
+    --bfv-touch-min: 44px;
+    margin-bottom: var(--bfv-spacing-lg);
+    color: var(--bfv-text);
 }
 
-#bf_validator_settings .inline-drawer-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-#bf_validator_settings .inline-drawer-header b {
-    flex: 1;
-}
-
-#bf_validator_settings_content {
-    padding: 10px 0;
-}
+/* ===== Layout ===== */
 
 .bf-validator-section {
-    margin-bottom: 15px;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 5px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: var(--bfv-spacing-lg);
 }
 
-.bf-validator-section-header {
+.bf-validator-section h4 {
+    margin: 0 0 var(--bfv-spacing-sm);
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    gap: var(--bfv-spacing-sm);
 }
 
-.bf-validator-section-header h4 {
-    margin: 0;
-    flex: 1;
-    font-size: 0.95em;
-    color: #ccc;
+.bf-validator-divider {
+    border: none;
+    border-top: 1px solid var(--bfv-border);
+    margin: var(--bfv-spacing-lg) 0;
 }
 
-.bf-validator-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
+.bf-validator-main-toggle {
+    margin-bottom: var(--bfv-spacing-md);
 }
 
-.bf-validator-row label {
-    min-width: 140px;
-    color: #aaa;
-    font-size: 0.9em;
-}
-
-.bf-validator-row select,
-.bf-validator-row input[type="number"] {
-    flex: 1;
-    max-width: 200px;
-}
-
-.bf-validator-textarea {
-    width: 100%;
-    min-height: 100px;
-    padding: 8px;
-    resize: vertical;
-    font-family: inherit;
-    font-size: 0.9em;
-    box-sizing: border-box;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    color: inherit;
-}
-
-.bf-validator-textarea:focus {
-    outline: none;
-    border-color: rgba(100, 150, 255, 0.5);
-}
-
-.bf-validator-presets {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-top: 8px;
-}
-
-.bf-validator-preset-btn {
-    padding: 4px 8px;
-    font-size: 0.8em;
-    background: rgba(100, 150, 255, 0.2);
-    border: 1px solid rgba(100, 150, 255, 0.3);
-    border-radius: 3px;
-    color: #8af;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.bf-validator-preset-btn:hover {
-    background: rgba(100, 150, 255, 0.3);
-    border-color: rgba(100, 150, 255, 0.5);
-}
-
-.bf-validator-info {
-    color: #888;
+.bf-validator-helper {
+    color: var(--bfv-text-muted);
     font-size: 0.85em;
-    margin-top: 5px;
-    font-style: italic;
+    margin: var(--bfv-spacing-xs) 0 var(--bfv-spacing-sm);
+    display: block;
+}
+
+.bf-validator-helper-inline {
+    color: var(--bfv-text-muted);
+    font-size: 0.85em;
+}
+
+.bf-validator-full-width {
+    width: 100%;
+    margin-bottom: var(--bfv-spacing-sm);
+}
+
+.bf-validator-narrow-input {
+    width: 80px !important;
+}
+
+.bf-validator-inline-field {
+    display: flex;
+    gap: var(--bfv-spacing-sm);
+    align-items: center;
+    margin-bottom: var(--bfv-spacing-sm);
+}
+
+.bf-validator-field-header {
+    display: flex;
+    align-items: center;
+    gap: var(--bfv-spacing-sm);
+    margin-bottom: var(--bfv-spacing-xs);
+}
+
+/* Checkbox labels (ST conventions) */
+.bf-validator-extension-block .checkbox_label {
+    display: flex;
+    align-items: center;
+    gap: var(--bfv-spacing-sm);
+    margin-bottom: var(--bfv-spacing-sm);
+    cursor: pointer;
+    min-height: var(--bfv-touch-min);
+}
+
+/* Danger button */
+.bf-validator-danger {
+    color: var(--bfv-text-danger) !important;
+}
+
+/* Collapsible sections */
+.bf-validator-collapsible-section {
+    margin-bottom: var(--bfv-spacing-lg);
+    margin-top: var(--bfv-spacing-sm);
+}
+
+.bf-validator-collapsible-header {
+    cursor: pointer;
+    padding: var(--bfv-spacing-sm);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: var(--bfv-spacing-sm);
+}
+
+/* ===== Tabs ===== */
+
+.bf-validator-tabs {
+    display: flex;
+    gap: var(--bfv-spacing-xs);
+    margin-bottom: var(--bfv-spacing-lg);
+    border-bottom: 1px solid var(--bfv-border);
+    padding-bottom: var(--bfv-spacing-xs);
+    flex-wrap: wrap;
+}
+
+.bf-validator-tab-btn {
+    background: var(--bfv-tab-bg);
+    border: 1px solid transparent;
+    border-bottom: 2px solid transparent;
+    padding: var(--bfv-spacing-sm) var(--bfv-spacing-md);
+    border-radius: var(--bfv-radius) var(--bfv-radius) 0 0;
+    cursor: pointer;
+    color: var(--bfv-text-muted);
+    font-size: 0.9em;
+    transition: all 0.15s ease;
+    min-height: var(--bfv-touch-min);
+}
+
+.bf-validator-tab-btn:hover {
+    color: var(--bfv-text);
+    background: var(--bfv-tab-active-bg);
+}
+
+.bf-validator-tab-btn.active {
+    color: var(--bfv-text);
+    background: var(--bfv-tab-active-bg);
+    border-bottom-color: var(--bfv-tab-active-border);
+}
+
+.bf-validator-tab-btn i {
+    margin-right: var(--bfv-spacing-xs);
+}
+
+.bf-validator-tab-panel {
+    min-height: 100px;
+}
+
+/* ===== Preset Toolbar ===== */
+
+.bf-validator-preset-toolbar {
+    display: flex;
+    gap: var(--bfv-spacing-sm);
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-top: var(--bfv-spacing-xs);
+}
+
+.bf-validator-preset-toolbar-safe,
+.bf-validator-preset-toolbar-danger {
+    display: flex;
+    gap: var(--bfv-spacing-xs);
+}
+
+.bf-validator-btn-label {
+    /* Hide labels on very small widths if needed */
 }
 
 /* ===== Status Indicator ===== */
@@ -120,7 +183,7 @@
     gap: 8px;
     padding: 8px 12px;
     background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
+    border-radius: var(--bfv-radius);
     margin-bottom: 10px;
 }
 
@@ -155,16 +218,71 @@
 .bf-validator-status-text {
     flex: 1;
     font-size: 0.9em;
-    color: #aaa;
+    color: var(--bfv-text-muted);
 }
 
-/* ===== Message Hiding (display:none - 100% reliable, mobile-compatible) ===== */
+/* ===== Textarea ===== */
+
+.bf-validator-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 8px;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 0.9em;
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--bfv-radius);
+    color: inherit;
+}
+
+.bf-validator-textarea:focus {
+    outline: none;
+    border-color: rgba(100, 150, 255, 0.5);
+}
+
+/* ===== Slider ===== */
+
+.bf-validator-slider-val {
+    min-width: 35px;
+    text-align: center;
+    font-size: 0.9em;
+    color: #ccc;
+    font-weight: bold;
+}
+
+/* ===== Rule Preset Buttons ===== */
+
+.bf-validator-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: var(--bfv-spacing-sm);
+}
+
+.bf-validator-preset-btn {
+    padding: 4px 8px;
+    font-size: 0.8em;
+    background: rgba(100, 150, 255, 0.2);
+    border: 1px solid rgba(100, 150, 255, 0.3);
+    border-radius: 3px;
+    color: #8af;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.bf-validator-preset-btn:hover {
+    background: rgba(100, 150, 255, 0.3);
+    border-color: rgba(100, 150, 255, 0.5);
+}
+
+/* ===== Message Hiding ===== */
 
 .mes[data-bf-validating="true"] {
     display: none !important;
 }
 
-/* Messages marked as validated should always be visible */
 .mes[data-bf-validated="true"] {
     display: flex !important;
 }
@@ -209,7 +327,6 @@
     user-select: none;
     -webkit-user-select: none;
     transition: transform 0.1s, box-shadow 0.1s;
-    /* Touch-friendly minimum size */
     min-height: 36px;
     min-width: 44px;
 }
@@ -280,40 +397,13 @@
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* ===== Range Slider Value Display ===== */
-
-.bf-validator-slider-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-}
-
-.bf-validator-slider-row label {
-    min-width: 140px;
-    color: #aaa;
-    font-size: 0.9em;
-}
-
-.bf-validator-slider-row input[type="range"] {
-    flex: 1;
-}
-
-.bf-validator-slider-val {
-    min-width: 35px;
-    text-align: center;
-    font-size: 0.9em;
-    color: #ccc;
-    font-weight: bold;
-}
-
 /* ===== Debug Panel ===== */
 
 .bf-validator-debug {
     margin-top: 10px;
     padding: 10px;
     background: rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
+    border-radius: var(--bfv-radius);
     font-family: monospace;
     font-size: 0.8em;
     max-height: 200px;
@@ -325,17 +415,9 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.bf-validator-debug-entry.pass {
-    color: #8f8;
-}
-
-.bf-validator-debug-entry.fail {
-    color: #f88;
-}
-
-.bf-validator-debug-entry.info {
-    color: #88f;
-}
+.bf-validator-debug-entry.pass { color: #8f8; }
+.bf-validator-debug-entry.fail { color: #f88; }
+.bf-validator-debug-entry.info { color: #88f; }
 
 /* ===== Rule Cards ===== */
 
@@ -343,7 +425,7 @@
     margin-bottom: 6px;
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 5px;
+    border-radius: var(--bfv-radius);
     overflow: hidden;
 }
 
@@ -417,38 +499,9 @@
     display: none;
 }
 
-/* Disabled rule visual cue */
 .bf-validator-rule-card:has(.bf-validator-rule-enabled:not(:checked)) .bf-validator-rule-name {
     opacity: 0.5;
     text-decoration: line-through;
-}
-
-/* Full preset buttons */
-.bf-validator-full-preset-btn {
-    padding: 4px 8px;
-    font-size: 0.8em;
-    background: rgba(200, 150, 50, 0.2);
-    border: 1px solid rgba(200, 150, 50, 0.3);
-    border-radius: 3px;
-    color: #da6;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.bf-validator-full-preset-btn:hover {
-    background: rgba(200, 150, 50, 0.35);
-    border-color: rgba(200, 150, 50, 0.5);
-}
-
-.bf-validator-full-preset-btn.bf-validator-full-preset-user {
-    background: rgba(150, 100, 200, 0.2);
-    border-color: rgba(150, 100, 200, 0.3);
-    color: #b8a;
-}
-
-.bf-validator-full-preset-btn.bf-validator-full-preset-user:hover {
-    background: rgba(150, 100, 200, 0.35);
-    border-color: rgba(150, 100, 200, 0.5);
 }
 
 /* ===== Stage Header Badges ===== */
@@ -472,10 +525,4 @@
     background: rgba(100, 150, 255, 0.2);
     color: #8af;
     border: 1px solid rgba(100, 150, 255, 0.3);
-}
-
-.bf-validator-stage-badge.stage-2 {
-    background: rgba(200, 100, 255, 0.2);
-    color: #c8f;
-    border: 1px solid rgba(200, 100, 255, 0.3);
 }
