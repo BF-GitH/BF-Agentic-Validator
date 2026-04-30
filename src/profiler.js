@@ -90,7 +90,7 @@ export async function swapProfile(targetId) {
         // Wait for profile to be loaded
         await new Promise((resolve) => {
             getContext().eventSource.once(
-                getContext().event_types.CONNECTION_PROFILE_LOADED,
+                getContext().eventTypes.CONNECTION_PROFILE_LOADED,
                 resolve
             );
         });
@@ -134,7 +134,7 @@ export async function restoreProfile(profileId) {
             }, 3000); // 3 second timeout
 
             getContext().eventSource.once(
-                getContext().event_types.CONNECTION_PROFILE_LOADED,
+                getContext().eventTypes.CONNECTION_PROFILE_LOADED,
                 () => {
                     clearTimeout(timeout);
                     resolve();
