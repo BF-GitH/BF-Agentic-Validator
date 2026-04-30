@@ -23,7 +23,17 @@ async function ensurePopup() {
     return false;
 }
 
-const EXTENSION_NAME = 'bf-agentic-validator';
+// Derive extension folder name from actual URL to avoid case-sensitivity issues on Linux/Android
+const EXTENSION_NAME = (() => {
+    try {
+        const url = new URL(import.meta.url);
+        const parts = url.pathname.split('/');
+        // URL looks like: /scripts/extensions/third-party/FOLDER_NAME/src/settings.js
+        const srcIdx = parts.lastIndexOf('src');
+        if (srcIdx > 0) return parts[srcIdx - 1];
+    } catch (e) { /* fallback */ }
+    return 'bf-agentic-validator';
+})();
 
 let extensionSettings = null;
 let debugLog = [];
